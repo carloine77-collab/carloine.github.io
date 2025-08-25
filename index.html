@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私域</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+    <div class="phone">
+        <div class="screen">
+
+            <div class="status-bar">
+                <span id="current-time">10:10</span>
+                <span>LTE</span>
+            </div>
+
+            <div class="app-page-container">
+
+                <div id="today-page" class="app-page active">
+                    <div class="app-content today-content">
+                        <div class="today-card">
+                            <div class="today-icon">❖</div>
+                            <h1 class="today-quote">每一个微小的进步，都值得被喝彩。</h1>
+                            <p class="today-date">August 25, 2025</p>
+                        </div>
+
+                        <div class="today-module today-stats-card">
+                            <div class="points-info">
+                                <div class="points-display">
+                                    <span class="points-label">学识点</span>
+                                    <span id="today-knowledge-points-value">0</span>
+                                </div>
+                                <button id="open-spend-modal-btn" class="secondary-action-btn">使用</button>
+                                <button id="today-checkin-btn">签到</button>
+                            </div>
+                        </div>
+
+                        <div class="today-module" id="today-schedule-module">
+                            <h3>今日日程</h3>
+                            <p>暂无安排</p>
+                        </div>
+                        <div class="today-module" id="today-habits-module">
+                            <h3>今日习惯</h3>
+                            <p>暂无待办习惯</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modules-page" class="app-page">
+                    <div class="app-header">
+                        <h2>功能模块</h2>
+                    </div>
+                    <div class="app-grid">
+                        <div class="app-icon" data-page="checkin-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="m9 14 2 2 4-4"/></svg>
+                            </div>
+                            <span class="app-name">签到日历</span>
+                        </div>
+                        <div class="app-icon" data-page="schedule-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+                            </div>
+                            <span class="app-name">共享日程</span>
+                        </div>
+                        <div class="app-icon" data-page="timeline-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <span class="app-name">24h时间线</span>
+                        </div>
+                        <div class="app-icon" data-page="habits-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                            </div>
+                            <span class="app-name">习惯与目标</span>
+                        </div>
+                        <div class="app-icon" data-page="chat-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17.09 4a4.9 4.9 0 0 0-4.09 2.13A4.9 4.9 0 0 0 9 4a4.91 4.91 0 0 0-5.91 5.78C3 16.94 6 22 9 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M6 12h.01M9 12h.01M15 12h.01M18 12h.01"/></svg>
+                            </div>
+                            <span class="app-name">私信</span>
+                        </div>
+                        <div class="app-icon" data-page="moments-page" id="moments-app-icon">
+                            <span class="notification-dot" style="display: none;"></span>
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5c0 2.5-3.5 4.5-8.4 4.5s-8.4-2-8.4-4.5"/></svg>
+                            </div>
+                            <span class="app-name">朋友圈</span>
+                        </div>
+                        <div class="app-icon" data-page="settings-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            </div>
+                            <span class="app-name">圣典</span>
+                        </div>
+                        <div class="app-icon" data-page="news-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4"/><path d="M16 2v20"/><path d="M8 7h4"/><path d="M8 12h4"/><path d="M8 17h4"/></svg>
+                            </div>
+                            <span class="app-name">新闻摘要</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="chat-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>陈既白</h2>
+                    </div>
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <form class="chat-input-form" id="chat-form">
+                        <input type="text" id="chat-input" placeholder="输入消息..." autocomplete="off">
+                        <button type="submit" title="发送">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </form>
+                </div>
+
+                <div id="schedule-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>共享日程</h2>
+                    </div>
+                    <div class="app-content">
+                        <div id="schedule-grid"></div>
+                    </div>
+                </div>
+
+                <div id="timeline-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>24h时间线</h2>
+                    </div>
+                    <div class="app-content">
+                        <div class="timeline-controls">
+                            <input type="date" id="timeline-date-picker">
+                        </div>
+                        <ul id="timeline-list"></ul>
+                        <form id="add-timeline-form">
+                            <input type="time" id="timeline-time-input" required>
+                            <input type="text" id="timeline-text-input" placeholder="记录今天的活动..." required>
+                            <button type="submit">+</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="habits-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>习惯与目标</h2>
+                    </div>
+                    <div class="app-content">
+                        <div id="habit-list"></div>
+                        <form id="add-habit-form">
+                            <input type="text" id="habit-input" placeholder="添加新习惯..." required>
+                            <button type="submit">添加</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="settings-page" class="app-page">
+                    <div class="app-header">
+                        <h2>“圣典”协议</h2>
+                    </div>
+                    <div class="app-content settings-content">
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <div class="setting-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                </div>
+                                <h3>AI 服务配置</h3>
+                                <span class="save-indicator">✓ 已保存</span>
+                            </div>
+                            <div class="setting-body">
+                                <input type="password" id="api-key-input" placeholder="在此输入你的语言模型API Key">
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <div class="setting-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"></circle><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path></svg>
+                                </div>
+                                <h3>用户认知档案</h3>
+                                <span class="save-indicator">✓ 已保存</span>
+                            </div>
+                            <div class="setting-body">
+                                <textarea id="user-profile-input" placeholder="定义用户的背景、语言风格、人格逻辑及知识体系..."></textarea>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <div class="setting-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17.09 4a4.9 4.9 0 0 0-4.09 2.13A4.9 4.9 0 0 0 9 4a4.91 4.91 0 0 0-5.91 5.78C3 16.94 6 22 9 22c1.25 0 2.5-1.06 4-1.06Z"></path></svg>
+                                </div>
+                                <h3>AI人格设定</h3>
+                                <span class="save-indicator">✓ 已保存</span>
+                            </div>
+                            <div class="setting-body">
+                                <textarea id="ai-persona-input" placeholder="定义AI的世界观、行为模式、知识领域..."></textarea>
+                            </div>
+                        </div>
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <div class="setting-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+                                </div>
+                                <h3>共享记忆库</h3>
+                                <span class="save-indicator">✓ 已保存</span>
+                            </div>
+                            <div class="setting-body">
+                                <textarea id="shared-memory-input" placeholder="记录、存储和检索用户与AI互动中产生的关键事件..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="news-page" class="app-page">
+                    <div class="app-header"><button class="back-btn-modules">‹ 功能</button>
+                        <h2>新闻摘要</h2>
+                    </div>
+                    <div class="placeholder-content">
+                        <div class="icon">📰</div>
+                        <p>新闻摘要模块正在开发中...</p>
+                    </div>
+                </div>
+
+                <div id="moments-page" class="app-page">
+                    <div class="app-content moments-content-scrollable">
+                        <div class="moments-cover">
+                            <img src="https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cover Photo">
+                            <div class="moments-profile">
+                                <span class="moments-profile-name">我</span>
+                                <div class="moments-profile-avatar">
+                                    <img src="https://image.lexica.art/full_jpg/a6a1858c-3081-4a16-a144-f2a83e606117" alt="User Avatar">
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div id="moments-feed-list" class="feed-list-container">
+                            </div>
+                    </div>
+                    
+                    <div class="ai-page-header">
+                        <button class="back-btn-modules">‹</button>
+                        <h2 class="header-title">朋友圈</h2>
+                        <button id="open-post-modal-btn" class="header-action-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="checkin-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>签到日历</h2>
+                    </div>
+                    <div class="app-content">
+                        <div class="checkin-stats">
+                            <div id="knowledge-points-display">学识点: 0</div>
+                            <div id="streak-display">连续签到: 0 天</div>
+                        </div>
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button id="prev-month-btn">‹</button>
+                                <h3 id="month-year-display"></h3>
+                                <button id="next-month-btn">›</button>
+                            </div>
+                            <div class="calendar-weekdays">
+                                <div>日</div>
+                                <div>一</div>
+                                <div>二</div>
+                                <div>三</div>
+                                <div>四</div>
+                                <div>五</div>
+                                <div>六</div>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid"></div>
+                        </div>
+                        <button id="do-checkin-btn" class="checkin-btn-today">签到</button>
+                    </div>
+                </div>
+
+                <div id="ai-profile-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-chat">‹</button>
+                    </div>
+                    <div class="app-content profile-content">
+                        <div class="profile-header">
+                            <div class="profile-avatar-large">
+                                </div>
+                            <h2 class="profile-name">陈既白</h2>
+                            <p class="profile-signature">“在此处设置个性签名”</p>
+                        </div>
+                        <div class="profile-menu">
+                            <div class="profile-menu-item" id="profile-moments-link">
+                                <span>朋友圈</span>
+                                <span class="arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ai-moments-page" class="app-page">
+                    <div class="app-content moments-content-scrollable">
+                        <div class="moments-cover">
+                            <img src="https://images.pexels.com/photos/931018/pexels-photo-931018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cover Photo">
+                            <div class="moments-profile">
+                                <span class="moments-profile-name">陈既白</span>
+                                <div class="moments-profile-avatar">
+                                    <img src="https://image.lexica.art/full_jpg/cf5b8015-844c-4a69-aaac-501b8782d475" alt="AI Avatar">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="ai-moments-feed-list" class="feed-list-container">
+                            </div>
+                    </div>
+
+                    <div class="ai-page-header">
+                        <button class="back-btn-ai-profile">‹</button>
+                        <h2 class="header-title">朋友圈</h2>
+                    </div>
+                </div>
+
+            </div>
+
+            <nav id="bottom-nav">
+                <div class="nav-btn active" data-page="today-page">🏠</div>
+                <div class="nav-btn" data-page="chat-page">💬</div>
+                <div class="nav-btn" data-page="modules-page">❖</div>
+                <div class="nav-btn" data-page="settings-page">⚙️</div>
+            </nav>
+
+        </div>
+    </div>
+
+    <div id="schedule-modal" class="modal">
+        <div class="modal-content">
+            <h3>管理日程事件</h3>
+            <input type="hidden" id="modal-cell-id">
+            <textarea id="modal-event-text" rows="4" placeholder="输入事件内容..."></textarea>
+            <div class="modal-buttons">
+                <button class="cancel-btn">取消</button>
+                <button class="delete-btn">删除</button>
+                <button class="save-btn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <div id="post-moment-modal" class="modal">
+        <div class="modal-content post-modal-content">
+            <h3>发表动态</h3>
+            <textarea id="post-modal-textarea" rows="6" placeholder="分享新鲜事..."></textarea>
+            <div class="modal-buttons">
+                <button id="post-modal-cancel-btn" class="cancel-btn">取消</button>
+                <button id="post-modal-submit-btn" class="save-btn">发表</button>
+            </div>
+        </div>
+    </div>
+    <div id="spend-points-modal" class="modal">
+        <div class="modal-content">
+            <h3>使用学识点</h3>
+            <input type="number" id="spend-points-modal-input" class="modal-input" placeholder="输入消耗数量" min="1">
+            <div class="modal-buttons">
+                <button id="spend-modal-cancel-btn" class="cancel-btn">取消</button>
+                <button id="spend-modal-confirm-btn" class="save-btn">确认</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

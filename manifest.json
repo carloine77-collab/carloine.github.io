@@ -1,0 +1,22 @@
+{
+  "name": "私域",
+  "short_name": "私域",
+  "description": "一个私人的AI伴侣应用",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f8f6f0",
+  "theme_color": "#8C2F2F",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

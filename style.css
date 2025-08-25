@@ -1,0 +1,1525 @@
+/* --- 1. Global Styles & Color Palette --- */
+:root {
+    --bg-color: #f8f6f0;
+    /* 米白色 */
+    --primary-color: #8C2F2F;
+    /* 新的印章红 */
+    --text-color: #3d3d3d;
+    --subtle-text-color: #888;
+    --border-color: #e0e0e0;
+    --accent-color: #27ae60;
+    /* For success/check-in states */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #e0e0e0;
+    /* 核心修改：将 'Noto Serif SC' 添加到字体列表的最前面 */
+    font-family: 'Noto Serif SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* 新增：设置默认字重为 700 (粗体) */
+    font-weight: 900;
+}
+
+/* --- 2. Phone Shell & Screen --- */
+.phone {
+    width: 375px;
+    height: 812px;
+    background-color: var(--bg-color);
+    border: 12px solid #333;
+    border-radius: 40px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.screen {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--subtle-text-color);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 15px 25px 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 110;
+    background-color: var(--bg-color);
+}
+
+/* --- 3. Page Switching Logic --- */
+.app-page-container {
+    flex-grow: 1;
+    position: relative;
+    overflow-y: auto;
+    padding-top: 50px;
+    /* Space for status bar */
+}
+
+.app-page {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.app-page.active {
+    display: flex;
+    z-index: 50; /* 关键修复1: 确保活动页面在最上层 */
+    background-color: var(--bg-color); /* 关键修复2: 确保页面有不透明的背景 */
+}
+
+/* --- 4. Today Page (New Home) --- */
+.today-content {
+    padding: 15px;
+}
+
+.today-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+}
+
+.today-icon {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.today-quote {
+    font-size: 22px;
+    color: var(--primary-color);
+    margin: 0 0 10px;
+}
+
+.today-date {
+    font-size: 14px;
+    color: var(--subtle-text-color);
+    margin: 0;
+}
+
+.today-module {
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.today-module h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.today-module p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* --- 5. Modules Page (Old Home) --- */
+#modules-page {
+    padding: 0 20px 20px;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    padding-top: 10px;
+}
+
+.app-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.app-icon .icon-bg {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+    transition: transform 0.2s ease-in-out;
+    /* 新增：为SVG图标设置默认颜色和大小 */
+    color: var(--primary-color);
+    /* 让图标颜色默认为印章红 */
+}
+
+.app-icon .icon-bg svg {
+    width: 32px;
+    /* 设置SVG图标的宽度 */
+    height: 32px;
+    /* 设置SVG图标的高度 */
+}
+
+.app-icon:hover .icon-bg {
+    transform: scale(1.05);
+}
+
+.app-icon .app-name {
+    font-size: 12px;
+}
+
+/* --- 6. General App Page Styles --- */
+.app-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    flex-shrink: 0;
+    background-color: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.back-btn-modules {
+    font-size: 16px;
+    color: var(--primary-color);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0 10px 0 0;
+}
+
+.app-header h2 {
+    font-size: 20px;
+    color: var(--text-color);
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.app-header .back-btn-modules+h2 {
+    transform: translateX(-25px);
+}
+
+.app-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+/* --- 7. Chat Page --- */
+
+/* ★★★ 核心修正点 #1：删除了错误的 #chat-page { display: flex; } 规则 ★★★ */
+/* 这条错误的规则是导致页面无法切换、显示错乱的根本原因。删除后，页面切换逻辑将恢复正常。 */
+
+#chat-page {
+    flex-direction: column;
+}
+.chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+    max-width: 90%;
+}
+
+.message-container.sender-user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.chat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9e9eb;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.chat-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.chat-avatar:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.message {
+    padding: 10px 14px;
+    border-radius: 18px;
+    word-wrap: break-word;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-end;
+    min-height: 22px;
+}
+
+.message.user {
+    background-color: var(--primary-color);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.ai {
+    background-color: #ffffff;
+    color: var(--text-color);
+    border-bottom-left-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.message-content {
+    line-height: 1.6;
+    white-space: normal;
+}
+
+/* ★★★ 核心修正点 #2：采用新的CSS规则，彻底解决AI对话框边距问题 ★★★ */
+/* 新规则直接针对Markdown生成的 <p> 标签，移除其边距，从根本上解决问题。*/
+.message-content > * {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* 第2步：仅在内容块之间添加一个固定的、统一的间距 */
+.message-content > * + * {
+    margin-top: 0.1em; /* 您可以调小这个值（如0.5em）来缩小间距 */
+}
+
+/* 第3步（推荐）：为列表设置一个合适的左侧缩进 */
+.message-content ul,
+.message-content ol {
+    padding-left: 25px;
+}
+
+.message-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-top: 4px;
+}
+
+.message-timestamp {
+    font-size: 11px;
+    color: var(--subtle-text-color);
+}
+
+.message.user .message-timestamp {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.read-receipt {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s;
+    line-height: 1;
+}
+
+.message.ai .read-receipt {
+    color: var(--subtle-text-color);
+}
+
+.message.ai .read-receipt.read {
+    color: var(--primary-color);
+}
+
+/* 用户消息(红色背景)的已读勾，使用高对比度的亮白色，确保清晰可见 */
+.message.user .read-receipt.read {
+    color: rgba(243, 242, 240, 0.95);
+}
+
+.message.loading .message-content {
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.loading-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #aaa;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1.0);
+    }
+}
+
+.chat-input-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 10px 15px;
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+}
+
+#chat-input {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    background-color: white;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+.chat-input-form button {
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+    padding: 0;
+}
+
+.chat-input-form button svg {
+    width: 22px;
+    height: 22px;
+    transform: translate(0px, -1px);
+    /* 最终居中微调 */
+}
+
+.chat-input-form button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 30px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #e9e9eb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    font-weight: bold;
+    margin: 0 auto 15px;
+}
+
+.profile-name {
+    margin: 0 0 5px;
+}
+
+.profile-signature {
+    margin: 0;
+    color: var(--subtle-text-color);
+}
+
+.profile-menu {
+    width: 100%;
+}
+
+.profile-menu-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-menu-item .arrow {
+    color: var(--subtle-text-color);
+}
+
+/* --- 8. Schedule Page --- */
+#schedule-grid {
+    display: grid;
+    grid-template-columns: 40px repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.grid-header,
+.time-slot,
+.schedule-block {
+    padding: 8px 4px;
+    font-size: 12px;
+    background-color: white;
+    border-radius: 4px;
+}
+
+.grid-header {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.time-slot {
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    /* 改为纵向排列 */
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    /* 调整主文字大小 */
+    font-weight: bold;
+    /* 让“第x节”更突出 */
+    gap: 4px;
+    /* 在两行文字间增加一点间距 */
+    padding: 4px 2px;
+}
+
+.slot-time {
+    font-size: 10px;
+    /* 让时间字体小一点 */
+    font-weight: normal;
+    /* 正常字重 */
+    color: var(--subtle-text-color);
+    /* 使用更柔和的颜色 */
+}
+
+.schedule-block {
+    min-height: 65px;
+    cursor: pointer;
+    position: relative;
+    background-color: #e9f5ff;
+    transition: background-color 0.2s;
+}
+
+.schedule-block:hover {
+    background-color: #d4eaff;
+}
+
+.schedule-block.has-event {
+    background-color: var(--primary-color);
+    color: white;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.event-text {
+    font-size: 11px;
+    padding: 2px;
+}
+
+/* --- 9. 24h Timeline Page --- */
+#timeline-page .app-content {
+    padding: 15px 12px;
+}
+
+.timeline-controls {
+    margin-bottom: 25px;
+}
+
+#timeline-date-picker {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+#timeline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 15px;
+    bottom: -10px;
+    width: 2px;
+    background-color: #f0f0f0;
+}
+
+.timeline-item:last-child::after {
+    display: none;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    border: 2px solid var(--bg-color);
+    z-index: 1;
+}
+
+.timeline-time {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-color);
+    flex-shrink: 0;
+    line-height: 1.6;
+    padding-top: 1px;
+}
+
+.timeline-content {
+    font-size: 15px;
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    word-break: break-word;
+}
+
+#add-timeline-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+    padding-left: 25px;
+    margin-top: -5px;
+}
+
+#add-timeline-form::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    border: 2px solid var(--bg-color);
+    z-index: 1;
+}
+
+#add-timeline-form input {
+    border: 1px solid #eee;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+#add-timeline-form input[type="time"] {
+    flex-basis: 90px;
+    flex-shrink: 0;
+}
+
+#add-timeline-form input[type="text"] {
+    flex-grow: 1;
+    min-width: 50px;
+}
+
+#add-timeline-form button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.no-timeline-entries {
+    text-align: center;
+    color: var(--subtle-text-color);
+    padding: 40px 0;
+}
+
+/* --- 10. Habits Page --- */
+#add-habit-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#add-habit-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+#add-habit-form button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#habit-list {
+    list-style: none;
+    padding: 0;
+}
+
+.habit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.habit-info {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.habit-name {
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.habit-streak {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #ff7800;
+    font-weight: bold;
+}
+
+.habit-streak span {
+    margin-left: 2px;
+}
+
+.check-in-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.check-in-btn.checked {
+    background-color: #aaa;
+}
+
+/* --- 11. Settings Page ("Sacred Document") --- */
+.setting-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    padding: 15px 20px;
+}
+
+.setting-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.setting-icon {
+    color: var(--primary-color);
+    margin-right: 6px;
+    position: relative;
+    top: 3px;
+}
+
+.setting-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.setting-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-color);
+    flex-grow: 1;
+}
+
+.save-indicator {
+    color: var(--accent-color);
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.save-indicator.visible {
+    opacity: 1;
+}
+
+.setting-body input,
+.setting-body textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.setting-body textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.setting-body input:focus,
+.setting-body textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(140, 47, 47, 0.1);
+}
+
+/* --- 12. Placeholder Pages --- */
+.placeholder-content {
+    text-align: center;
+    margin: auto;
+    color: var(--subtle-text-color);
+}
+
+.placeholder-content .icon {
+    font-size: 60px;
+}
+
+.placeholder-content p {
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+/* --- 13. Redesigned Modal Styles --- */
+
+/* 模态框背景遮罩 */
+.modal {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* 背景更柔和 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* 添加过渡效果 */
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out; 
+}
+
+/* 模态框内容区域 */
+.modal-content {
+    background: var(--bg-color);
+    padding: 25px;
+    border-radius: 20px;
+    width: 88%;
+    max-width: 330px; /* 新增：确保弹窗不会过宽 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0,0,0,0.05);
+    transform: scale(0.95);
+    transition: transform 0.25s ease-in-out;
+}
+
+/* 标题样式 */
+.modal-content h3 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    color: var(--primary-color); /* 使用主题红色 */
+}
+
+/* 文本输入区域样式 */
+.modal-content textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    resize: vertical;
+    background-color: #fff; /* 纯白背景以突出 */
+    font-size: 16px;
+    min-height: 100px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-content textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(140, 47, 47, 0.1);
+}
+
+/* 按钮容器 */
+.modal-buttons {
+    display: flex;
+    gap: 10px; /* 按钮之间的间距 */
+}
+
+/* 通用按钮样式 */
+.modal-buttons button {
+    flex-grow: 1; /* 让按钮平分宽度 */
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 16px;
+    transition: transform 0.1s ease, opacity 0.2s;
+}
+
+.modal-buttons button:active {
+    transform: scale(0.98); /* 点击时轻微缩小 */
+}
+
+/* 主操作按钮 (保存/发表) */
+.modal-buttons .save-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.modal-buttons .save-btn:hover {
+    opacity: 0.9;
+}
+
+/* 删除按钮 */
+.modal-buttons .delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.modal-buttons .delete-btn:hover {
+    opacity: 0.9;
+}
+
+/* 次要操作按钮 (取消) */
+.modal-buttons .cancel-btn {
+    background-color: #e9e9eb; /* 浅灰色背景 */
+    color: var(--subtle-text-color);
+}
+
+.modal-buttons .cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+.modal.visible {
+    display: flex; /* 当有.visible类时，才显示 */
+    opacity: 1;   /* 透明度变为1，让遮罩可见 */
+}
+
+.modal.visible .modal-content {
+    transform: scale(1); /* 内容区域恢复正常大小 */
+}
+/* --- 13.5. Check-in Calendar & Today Stats (UI-Optimized) --- */
+.today-stats-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.points-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.points-display .points-label {
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.points-display span#today-knowledge-points-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+#today-checkin-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+#today-checkin-btn:disabled {
+    background-color: #e9e9eb;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.checkin-stats {
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.calendar-container {
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.calendar-header button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+.calendar-weekdays,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.calendar-weekdays {
+    font-weight: bold;
+    color: var(--subtle-text-color);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.calendar-day {
+    padding: 0;
+    font-size: 14px;
+    border-radius: 50%;
+    height: 34px;
+    width: 34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: center;
+    color: var(--text-color);
+}
+
+.calendar-day.not-current-month {
+    color: #ccc;
+    pointer-events: none;
+}
+
+.calendar-day.is-today {
+    background-color: #f0f0f0;
+}
+
+.calendar-day.checked-in {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#do-checkin-btn {
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.checkin-btn-today {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.checkin-btn-today:disabled {
+    background-color: #e9e9eb;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* --- 14. Bottom Navigation Bar --- */
+#bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 65px;
+    background-color: #ffffff;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn {
+    font-size: 28px;
+    color: var(--subtle-text-color);
+    cursor: pointer;
+    transition: color 0.2s;
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.nav-btn.active {
+    color: var(--primary-color);
+}
+/* --- 15. Moments Page Styles --- */
+
+.moments-content {
+  padding: 10px;
+}
+
+.moment-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+#new-moment-form {
+  display: flex;
+  flex-direction: column;
+}
+
+#new-moment-form textarea {
+  width: 100%;
+  border: none;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 70px;
+  margin-bottom: 10px;
+}
+
+#new-moment-form button {
+  align-self: flex-end;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.moment-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.moment-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.moment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.moment-author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.moment-author-name {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+.moment-timestamp {
+  font-size: 12px;
+  color: var(--subtle-text-color);
+}
+
+.moment-content {
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 15px;
+}
+
+.moment-actions {
+  display: flex;
+  gap: 15px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 10px;
+}
+
+.moment-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 14px;
+}
+
+.comments-section {
+  margin-top: 15px;
+  background-color: #f7f7f7;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.comment {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.comment:last-child {
+    margin-bottom: 0;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: var(--text-color);
+  margin-right: 5px;
+}
+
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.comment-form input {
+  flex-grow: 1;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.app-icon {
+    position: relative; /* 为小红点定位 */
+}
+
+.notification-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    background-color: #e53935;
+    border-radius: 50%;
+    border: 2px solid var(--bg-color);
+}
+/* --- 16. AI Moments Page UI Overhaul --- */
+
+/* 让Header浮动在内容上层 */
+/* 1. 页面容器: 必须是相对定位，作为绝对定位顶栏的“锚点” */
+#ai-moments-page {
+    background-color: #ffffff;
+    flex-direction: column;
+    position: relative; /* 关键属性: 成为子元素的定位上下文 */
+    overflow: hidden;   /* 关键属性: 防止页面本身产生滚动条 */
+}
+
+/* 2. 顶栏: 必须是绝对定位，脱离文档流，固定在页面顶部 */
+.ai-page-header {
+    position: absolute;   /* 关键属性: 脱离文档流，使其固定 */
+    top: 50px;            /* 从顶部精确下移50px，避开状态栏 */
+    left: 0;
+    right: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 100;         /* 确保顶栏在内容区的上层 */
+    color: white;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
+}
+
+/* 确保顶栏内的按钮可以被点击 */
+.ai-page-header .back-btn-ai-profile,
+.ai-page-header .header-title {
+    pointer-events: auto;
+}
+
+/* 顶栏返回按钮的具体样式 */
+.ai-page-header .back-btn-ai-profile {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 10px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* 顶栏标题的具体样式 (滚动时浮现) */
+.ai-page-header .header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    font-weight: 900;
+    opacity: 0; 
+    transition: opacity 0.2s ease-in-out;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* 让主要内容可滚动 */
+.moments-content-scrollable {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 0; /* 顶部无内边距，让图片贴顶 */
+    box-sizing: border-box; /* 关键修复：防止横向滚动 */
+}
+
+/* 朋友圈封面区域 */
+.moments-cover {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    background-color: #ddd;
+    margin-bottom: 50px; /* 为头像留出空间 */
+}
+
+.moments-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 保证图片不变形地填满容器 */
+}
+
+/* 浮动的头像和名字 */
+.moments-profile {
+    position: absolute;
+    bottom: 15px; /* 距离图片底部的距离 */
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.moments-profile-name {
+    color: white;
+    font-size: 20px;
+    font-weight: 900;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+.moments-profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.moments-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 动态列表容器的样式 */
+.feed-list-container {
+    padding: 20px 10px;
+}
+
+/* 优化评论区样式 */
+#ai-moments-page .comment-form input {
+  background-color: white;
+  border: 1px solid #ddd;
+}
+/* --- 17. User Moments Page UI & Post Modal --- */
+
+/* 右上角操作按钮的样式 */
+.header-action-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    pointer-events: auto; /* 确保按钮可以点击 */
+}
+
+.header-action-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* 发表动态模态框的特定样式 */
+.post-modal-content {
+    width: 90%;
+}
+
+.post-modal-content textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    font-family: inherit;
+    font-size: 16px;
+    margin-bottom: 20px;
+    resize: vertical;
+}
+/* --- 用于“使用学识点”功能的新增样式 --- */
+
+/* 主页“使用”按钮的样式 */
+.secondary-action-btn {
+    background-color: #e9e9eb;
+    color: var(--subtle-text-color);
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    margin-right: 10px; /* 和签到按钮拉开距离 */
+}
+
+.secondary-action-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* 弹窗内输入框的通用样式 */
+.modal-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: #fff;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 900;
+}
+
+/* 隐藏number输入框自带的箭头 */
+.modal-input::-webkit-outer-spin-button,
+.modal-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.modal-input[type=number] {
+  -moz-appearance: textfield;
+}
