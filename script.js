@@ -1104,6 +1104,10 @@ document.addEventListener('DOMContentLoaded', () => {
             db.consecutiveCheckInDays = 0;
         }
     }
+    function addKnowledgePoints(amount, reason) {
+        db.knowledgePoints += amount;
+        console.log(`获得 ${amount} 学识点，原因：${reason}`);
+    }
 
     function handleCheckIn() {
         const today = new Date().toISOString().split('T')[0];
