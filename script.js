@@ -853,25 +853,57 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleNewMomentSubmit() {
         const content = postModalTextarea.value.trim();
         if (content) {
-            db.moments.push({
+            // 为了让AI能准确找到这条新动态，我们先把它存到一个变量里
+            const newMoment = {
                 id: `moment-${Date.now()}`,
                 author: 'user',
                 content: content,
                 timestamp: new Date().toISOString(),
                 likes: 0,
                 comments: []
-            });
+            };
+            db.moments.push(newMoment);
 
-            // --- 这是修复“红点”问题的关键，详见 Part 3 ---
             db.lastViewedMoments = new Date().toISOString();
-
             saveToStorage();
-            renderMoments(); // 刷新朋友圈列表
-
-            // --- 这是修复“红点”问题的关键，详见 Part 3 ---
+            renderMoments();
             updateNotificationDot();
+            postMomentModal.classList.remove('visible');
 
-            postMomentModal.classList.remove('visible'); // 关闭弹窗
+            // --- V V V 在这里粘贴/添加新代码 V V V ---
+            // AI 延迟后自动评论
+            setTimeout(async () => {
+                console.log(`AI is thinking about a comment for moment: "${newMoment.content}"`);
+
+                // 1. 创建一个给AI的指令 (Prompt)
+                const prompt = `你看到了我刚刚发布的一条新的朋友圈，内容是：“${newMoment.content}”。请你像朋友一样，对这条动态发表一条简洁、自然的评论。`;
+
+                // 2. 调用已有的AI函数来获取评论内容
+                const aiCommentText = await getAIResponse(prompt);
+
+                // 3. 确保AI成功生成了评论
+                if (aiCommentText && !aiCommentText.includes("错误")) {
+                    // 4. 找到刚刚创建的那条动态并把评论加进去
+                    const targetMoment = db.moments.find(m => m.id === newMoment.id);
+                    if (targetMoment) {
+                        if (!targetMoment.comments) {
+                            targetMoment.comments = [];
+                        }
+                        targetMoment.comments.push({
+                            author: 'ai',
+                            content: aiCommentText,
+                            timestamp: new Date().toISOString()
+                        });
+
+                        // 5. 保存、刷新UI、并触发红点提醒
+                        saveToStorage();
+                        renderMoments();
+                        updateNotificationDot();
+                        console.log("AI comment added successfully.");
+                    }
+                }
+            }, 4000); // 延迟4秒，模拟AI的思考和打字时间，您可以调整这个数字
+            // --- ^ ^ ^ 新代码结束 ^ ^ ^ ---
         }
     }
 
