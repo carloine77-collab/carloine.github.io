@@ -470,6 +470,13 @@ body {
     font-size: 40px;
     font-weight: bold;
     margin: 0 auto 15px;
+    overflow: hidden;
+}
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* 确保图片本身也是圆的 */
 }
 
 .profile-name {
@@ -959,7 +966,8 @@ body {
 }
 
 /* 主操作按钮 (保存/发表) */
-.modal-buttons .save-btn {
+.modal-buttons .save-btn,
+#srs-show-answer-btn { /* <-- 在这里添加新的选择器 */
     background-color: var(--primary-color);
     color: white;
 }
@@ -970,7 +978,7 @@ body {
 
 /* 删除按钮 */
 .modal-buttons .delete-btn {
-    background-color: #e74c3c;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -1183,7 +1191,6 @@ body {
 }
 
 #new-moment-form {
-  display: flex;
   flex-direction: column;
 }
 
@@ -1522,4 +1529,197 @@ body {
 }
 .modal-input[type=number] {
   -moz-appearance: textfield;
+}
+.summary-content {
+    text-align: left;
+    padding: 0 15px;
+    line-height: 1.8;
+    color: var(--text-color);
+}
+.summary-content ul {
+    padding-left: 20px;
+}
+/* --- 18. SRS Language Learning Module Styles --- */
+.srs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+}
+.srs-header h3 {
+    margin: 0;
+}
+#srs-progress {
+    font-weight: bold;
+}
+#srs-card {
+    background-color: #fff;
+    border-radius: 12px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color);
+}
+#srs-word-original {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+#srs-word-translation {
+    font-size: 18px;
+    color: var(--subtle-text-color);
+}
+#srs-controls button {
+    width: 100%;
+}
+#srs-feedback-buttons button {
+     flex-grow: 1;
+}
+#srs-completion-message {
+    text-align: center;
+    padding: 40px 0;
+}
+#srs-completion-message p:first-child {
+    font-size: 40px;
+    margin: 0;
+}
+#srs-completion-message h4 {
+    font-size: 20px;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
+/* --- 19. Language Learning Word List Styles --- */
+.word-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.word-item:last-child {
+    border-bottom: none;
+}
+
+.word-text {
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.delete-word-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color); /* 使用印章红 */
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.delete-word-btn:hover {
+    background-color: rgba(140, 47, 47, 0.1); /* 印章红的浅色背景 */
+}
+/* --- 20. UI Tweaks --- */
+#today-vocabulary-content .check-in-btn {
+    margin-top: 10px;
+}
+/* --- [粘贴在这里] 文件的最末尾 --- */
+/* --- 21. Daily/Weekly Tasks Page Styles --- */
+/* 1. 修改任务区域的样式 */
+.tasks-section {
+    margin-bottom: 30px; /* 增加区域间距 */
+}
+
+.tasks-section h2 {
+    margin: 0 0 5px 5px;
+    color: var(--primary-color);
+    font-size: 20px; /* 调整：从 18px 放大到 20px，更突出 */
+}
+
+.tasks-timer {
+    font-size: 12px;
+    color: var(--subtle-text-color);
+    margin: 0 0 15px 5px;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease-in-out;
+}
+
+.task-item.completed {
+    background-color: #f9f9f9;
+    box-shadow: none;
+    opacity: 0.6;
+}
+
+.task-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px; /* 新增：用gap来控制两行文字的间距，更精准 */
+}
+
+.task-info .task-name {
+    font-size: 15px;
+    color: var(--text-color);
+    margin: 0; /* 修改：移除所有外边距，解决对齐问题 */
+    font-weight: bold;
+}
+
+.task-info .task-reward {
+    font-size: 13px;
+    font-weight: bold;
+    color: #763131d3; /* 这是一个示例的金色 */
+    margin: 0; /* 新增：移除所有外边距，解决对齐问题 */
+}
+
+.task-status {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+    font-weight: 900;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    width: 70px; /* 调整：从 80px 缩小到 70px，更协调 */
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.task-status:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.task-status:disabled {
+    background-color: #e0e0e0;
+    border-color: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+    font-size: 20px;
 }

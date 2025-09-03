@@ -36,9 +36,41 @@ document.addEventListener('DOMContentLoaded', () => {
             userProfile: '',
             aiPersona: '',
             sharedMemory: ''
-        }
-    };
 
+        },
+        languageLearning: {
+            words: [] // words 数组将存储所有单词对象
+        },
+        tasks: {
+            daily: [],
+            weekly: []
+        },
+        lastDailyTaskRefresh: null, // YYYY-MM-DD
+        lastWeeklyTaskRefresh: null, // YYYY-MM-DD of the last Monday
+    };
+    const DAILY_TASK_POOL = [
+        { id: 'check_in', description: '完成一次每日签到', reward: 1 },
+        { id: 'complete_habit_1', description: '完成1个习惯打卡', reward: 1 },
+        { id: 'complete_habit_3', description: '完成3个习惯打卡', reward: 3 },
+        { id: 'learn_5_words', description: '学习5个新词汇', reward: 1 },
+        { id: 'review_10_words', description: '复习10个词汇', reward: 1 },
+        { id: 'add_timeline_entry', description: '在24h时间线中添加5条记录', reward: 1 },
+        { id: 'send_message', description: '与AI进行3次私信互动', reward: 1 },
+        { id: 'read_news', description: '更新一次日程表', reward: 1 },
+        { id: 'post_moment', description: '发表一条朋友圈动态', reward: 1 }
+    ];
+
+    // 每周任务池
+    const WEEKLY_TASK_POOL = [
+        { id: 'check_in_5_days', description: '本周累计签到7天', reward: 10 },
+        { id: 'complete_habit_20_times', description: '本周累计完成习惯打卡20次', reward: 15 },
+        { id: 'learn_30_words', description: '本周学习30个新词汇', reward: 8 },
+        { id: 'add_7_timeline_entries', description: '本周在24h时间线中添加24条记录', reward: 20 },
+        { id: 'ai_deep_chat', description: '与AI进行一次超过5轮的深入对话', reward: 2 },
+        { id: 'set_new_schedule', description: '日程表共计10个活动', reward: 20 },
+        { id: 'set_new_habit', description: '新增一个想要培养的习惯', reward: 5 },
+        { id: 'review_all_words', description: '将所有待复习词汇清零一次', reward: 10 }
+    ];
     function loadFromStorage() {
         const storedDb = localStorage.getItem('privateAiAssistantDB');
         if (storedDb) {
@@ -60,6 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     "19:00-19:45", "19:55-20:40", "21:00-21:45", "21:55-22:40"
                 ];
             }
+        }
+        if (!db.languageLearning) {
+            db.languageLearning = { words: [] };
+        }
+        if (!db.tasks) {
+            db.tasks = {
+                daily: [],
+                weekly: []
+            };
         }
     }
 
@@ -166,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const habitsModule = document.getElementById('today-habits-module');
         const undoneHabits = db.habits.filter(habit => !(habit.checkedIn && habit.checkedIn[today]));
         let habitsHtml = undoneHabits.map(habit => `<p>◻️ ${habit.name}</p>`).join('');
-        habitsModule.innerHTML = '<h3>今日习惯</h3>' + (habitsHtml || '<p>所有习惯已完成！🎉</p>');
+        habitsModule.innerHTML = '<h3>今日习惯</h3>' + (habitsHtml || '<p>所有习惯已完成🎉</p>');
         document.getElementById('today-knowledge-points-value').textContent = db.knowledgePoints;
     }
 
@@ -185,11 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
         avatar.className = 'chat-avatar';
         if (sender === 'ai') {
             // 在这里替换成你的AI头像图片路径
-            avatar.innerHTML = `<img src="https://image.lexica.art/full_jpg/cf5b8015-844c-4a69-aaac-501b8782d475" alt="AI Avatar">`;
+            avatar.innerHTML = `<img src="images/LLMavatar.jpg" alt="AI Avatar">`;
             avatar.addEventListener('click', () => showPage('ai-profile-page'));
         } else {
             // 在这里替换成你的用户头像图片路径
-            avatar.innerHTML = `<img src="https://image.lexica.art/full_jpg/a6a1858c-3081-4a16-a144-f2a83e606117" alt="User Avatar">`;
+            avatar.innerHTML = `<img src="images/Useravatar.jpg" alt="User Avatar">`;
         }
 
         const messageElement = document.createElement('div');
@@ -469,14 +510,17 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const time = document.getElementById('timeline-time-input').value;
         const text = document.getElementById('timeline-text-input').value;
-        if (time && text) {
-            // 新增：获取当前日期字符串，格式为 YYYY-MM-DD
-            const todayStr = new Date().toISOString().split('T')[0];
-            // 新增：保存记录时，同时存入 date 属性
-            db.timelineEntries.push({ date: todayStr, time, text });
+        const timelineDatePicker = document.getElementById('timeline-date-picker');
+
+        if (time && text && timelineDatePicker) {
+            // 核心修正：从日期选择器中直接读取用户选定的日期
+            const selectedDate = timelineDatePicker.value;
+
+            // 使用正确的日期来保存记录
+            db.timelineEntries.push({ date: selectedDate, time, text });
             saveToStorage();
-            // 新增：将日期选择器设置为今天，并重新渲染
-            document.getElementById('timeline-date-picker').value = todayStr;
+
+            // 体验优化：不再跳转回今天，而是停留在当前选择的日期并刷新列表
             renderTimeline();
             addTimelineForm.reset();
         }
@@ -503,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`习惯 "${habit.name}" 断卡了。最后打卡日: ${habit.lastCheckInDate}`);
 
                 // AI 发送关怀消息
-                const careMessage = `注意到你最近可能有点忙， “${habit.name}” 的习惯好像中断了。没关系哦，生活总有起伏，重新开始就是最大的进步。今天也要加油呀！`;
+                const careMessage = `我注意到 ‘${habit.name}’ 的执行记录中断了。这只是一个客观数据，不必为此苛责自己。向我陈述一下具体情况，我们来分析原因，调整计划。`;
                 db.chatMessages.push({ sender: 'ai', text: careMessage });
 
                 // 重置连续天数
@@ -574,11 +618,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 habit.lastCheckInDate = today;
 
                 saveToStorage();
-                addKnowledgePoints(5, '习惯打卡');
+                addKnowledgePoints(3, '习惯打卡');
                 if (habit.streak > 1) {
-                    aiPostMoment(`太棒了！你坚持“${habit.name}”已经连续 ${habit.streak} 天了，为你感到骄傲！`, 'habit_streak');
+                    aiPostMoment(`连续 ${habit.streak} 天了啊…说吧，想要什么奖励？`, 'habit_streak');
                 } else {
-                    aiPostMoment(`新目标新开始！看到你开始坚持“${habit.name}”这个好习惯，加油！`, 'habit_start');
+                    aiPostMoment(`看到你开始 ‘${habit.name}’ 了。我喜欢看你这样，认真地、一点点把自己变得更好的样子。`, 'habit_start');
                 }
                 renderHabits();
                 renderTodayPage();
@@ -684,7 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'moment-card';
 
             const authorName = moment.author === 'ai' ? '陈既白' : '我';
-            const authorAvatar = moment.author === 'ai' ? 'https://image.lexica.art/full_jpg/cf5b8015-844c-4a69-aaac-501b8782d475' : 'https://image.lexica.art/full_jpg/a6a1858c-3081-4a16-a144-f2a83e606117';
+            const authorAvatar = moment.author === 'ai' ? 'images/LLMavatar.jpg' : 'images/Useravatar.jpg';
 
             let commentsHtml = '';
             if (moment.comments && moment.comments.length > 0) {
@@ -742,7 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 作者信息是固定的
             const authorName = '陈既白';
-            const authorAvatar = 'https://image.lexica.art/full_jpg/cf5b8015-844c-4a69-aaac-501b8782d475';
+            const authorAvatar = 'images/LLMavatar.jpg';
 
             let commentsHtml = '';
             if (moment.comments && moment.comments.length > 0) {
@@ -890,6 +934,66 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2000);
         }
     }
+    // (可以把这段代码添加到您的 script.js 文件中)
+
+    async function getNewsSummary() {
+        const newsPageContent = document.querySelector('#news-page .placeholder-content');
+        const todayStr = new Date().toISOString().split('T')[0]; // 获取今天的日期 "YYYY-MM-DD"
+
+        // 检查今天是否已经总结过新闻了
+        if (db.newsSummary && db.newsSummary.date === todayStr) {
+            console.log("今天的新闻已经加载过了。");
+            newsPageContent.innerHTML = `<div class="icon">📰</div><div class="summary-content">${db.newsSummary.summary}</div>`;
+            return;
+        }
+
+        console.log("正在获取今天的最新新闻...");
+        newsPageContent.innerHTML = `<div class="icon">📰</div><p>正在为您生成今日新闻摘要...</p>`;
+
+        try {
+            // --- 第2步：调用新闻API ---
+            // 注意：您需要将 'YOUR_NEWS_API_KEY' 替换为您真实的Key
+            // 以NewsAPI.org为例，获取中国区商业新闻头条
+            const newsApiKey = '1eed14fa4e504dd199eb612369acb68f';
+            const newsResponse = await fetch(`https://newsapi.org/v2/top-headlines?sources=reuters,bbc-news&apiKey=${newsApiKey}`);
+            if (!newsResponse.ok) {
+                throw new Error('获取新闻失败！请检查您的新闻API Key。');
+            }
+
+            const newsData = await newsResponse.json();
+
+            if (newsData.articles.length === 0) {
+                newsPageContent.innerHTML = `<div class="icon">📰</div><p>抱歉，今天没有获取到新闻。</p>`;
+                return;
+            }
+
+            // --- 第3步：整理新闻内容用于总结 ---
+            // 我们将前3条新闻的标题和描述拼在一起，让AI总结
+            const articlesToSummarize = newsData.articles.slice(0, 3);
+            let contentForAI = "请基于以下新闻标题和描述，为我生成一份简短、易读的中文新闻摘要，分点阐述即可：\n\n";
+            articlesToSummarize.forEach((article, index) => {
+                contentForAI += `${index + 1}. 标题: ${article.title}\n   描述: ${article.description || '无'}\n\n`;
+            });
+
+            // --- 第4步：调用您已有的AI总结功能 ---
+            const summary = await getAIResponse(contentForAI); // getAIResponse 是您已有的函数
+
+            // --- 第5步：显示并存储结果 ---
+            const formattedSummary = marked.parse(summary); // 使用marked.js渲染Markdown
+            newsPageContent.innerHTML = `<div class="icon">📰</div><div class="summary-content">${formattedSummary}</div>`;
+
+            // 存入数据库，避免重复获取
+            db.newsSummary = {
+                date: todayStr,
+                summary: formattedSummary // 存储渲染好的HTML
+            };
+            saveToStorage();
+
+        } catch (error) {
+            console.error("生成新闻摘要时出错:", error);
+            newsPageContent.innerHTML = `<div class="icon">📰</div><p>抱歉，生成摘要时遇到问题: ${error.message}</p>`;
+        }
+    }
 
     function aiPostMoment(content, trigger) {
         console.log(`AI posting moment, triggered by: ${trigger}`);
@@ -934,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 使用 getAIResponse 函数，让 AI 根据人设生成内容
         // 这个 prompt (提示) 是关键，它告诉AI要做什么
-        const prompt = "请你根据自己的人格设定，像发朋友圈一样，发布一条关于今天心情、天气、一个有趣想法或对我说的话的动态。内容要自然、简洁。";
+        const prompt = "请你根据自己的人格设定，像发朋友圈一样，发布一条关于今天心情、天气、一个有趣想法或对我说的话的动态。内容要自然、简洁。不要长段落。";
         const aiContent = await getAIResponse(prompt);
 
         // 过滤掉可能的API错误信息
@@ -948,10 +1052,388 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("AI动态生成失败:", aiContent);
         }
     }
+    function renderStaticAvatars() {
+        const userAvatarPath = 'images/Useravatar.jpg'; // 你的用户头像
+        const aiAvatarPath = 'images/LLMavatar.jpg';   // 你的AI头像
 
+        const userMomentsAvatar = document.getElementById('user-moments-avatar-container');
+        if (userMomentsAvatar) {
+            userMomentsAvatar.innerHTML = `<img src="${userAvatarPath}" alt="User Avatar">`;
+        }
+
+        const aiMomentsAvatar = document.getElementById('ai-moments-avatar-container');
+        if (aiMomentsAvatar) {
+            aiMomentsAvatar.innerHTML = `<img src="${aiAvatarPath}" alt="AI Avatar">`;
+        }
+
+        const aiProfileAvatar = document.getElementById('ai-profile-avatar-container');
+        if (aiProfileAvatar) {
+            aiProfileAvatar.innerHTML = `<img src="${aiAvatarPath}" alt="AI Avatar">`;
+        }
+    }
+    const SRS_INTERVALS = [1, 3, 7, 14, 30, 90, 180];
+
+    // 日期帮助函数：计算N天后的日期字符串
+    function addDaysToDate(dateStr, days) {
+        const date = new Date(dateStr);
+        date.setDate(date.getDate() + days);
+        return date.toISOString().split('T')[0];
+    }
+    const srsModal = document.getElementById('srs-modal');
+    const srsProgress = document.getElementById('srs-progress');
+    const srsCard = document.getElementById('srs-card');
+    const srsControls = document.getElementById('srs-controls');
+    const srsWordOriginal = document.getElementById('srs-word-original');
+    const srsWordTranslation = document.getElementById('srs-word-translation');
+    const srsShowAnswerBtn = document.getElementById('srs-show-answer-btn');
+    const srsFeedbackButtons = document.getElementById('srs-feedback-buttons');
+    const srsIncorrectBtn = document.getElementById('srs-incorrect-btn');
+    const srsCorrectBtn = document.getElementById('srs-correct-btn');
+    const srsCompletionMessage = document.getElementById('srs-completion-message');
+    const deleteWordModal = document.getElementById('delete-word-modal');
+    const deleteWordConfirmBtn = document.getElementById('delete-word-confirm-btn');
+    const deleteWordCancelBtn = document.getElementById('delete-word-cancel-btn');
+    let wordIdToDelete = null; // 用于暂存将要删除的单词ID
+
+    let srsSession = {
+        words: [],
+        currentIndex: 0,
+        correctAnswers: 0
+    };
+
+    const addWordForm = document.getElementById('add-word-form');
+    const originalWordInput = document.getElementById('original-word-input');
+    const translationInput = document.getElementById('translation-input');
+    const wordListDiv = document.getElementById('word-list');
+
+    function renderLanguagePage() {
+        wordListDiv.innerHTML = ''; // 清空现有列表
+
+        if (db.languageLearning.words.length === 0) {
+            wordListDiv.innerHTML = '<p>您的词库是空的，请添加新单词。</p>';
+            return;
+        }
+
+        db.languageLearning.words.forEach(word => {
+            const wordItem = document.createElement('div');
+            wordItem.className = 'word-item';
+            wordItem.innerHTML = `
+            <span class="word-text">${word.original} - ${word.translation}</span>
+            <button class="delete-word-btn" data-id="${word.id}">删除</button>
+        `;
+            wordListDiv.appendChild(wordItem);
+        });
+    }
+    wordListDiv.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-word-btn')) {
+            wordIdToDelete = e.target.dataset.id; // 暂存ID
+            deleteWordModal.classList.add('visible'); // 显示自定义弹窗
+        }
+    });
+
+    // --- 紧接着，在下面粘贴处理弹窗按钮的全新逻辑 ---
+    deleteWordCancelBtn.addEventListener('click', () => {
+        deleteWordModal.classList.remove('visible');
+        wordIdToDelete = null; // 清空ID
+    });
+
+    deleteWordConfirmBtn.addEventListener('click', () => {
+        if (wordIdToDelete) {
+            db.languageLearning.words = db.languageLearning.words.filter(word => word.id !== wordIdToDelete);
+            saveToStorage();
+            renderLanguagePage(); // 重新渲染列表
+        }
+        deleteWordModal.classList.remove('visible');
+        wordIdToDelete = null; // 清空ID
+    });
+
+    addWordForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const original = originalWordInput.value.trim();
+        const translation = translationInput.value.trim();
+
+        if (original && translation) {
+            const today = new Date().toISOString().split('T')[0];
+
+            const newWord = {
+                id: `word-${Date.now()}`,
+                original: original,
+                translation: translation,
+                srsLevel: 0, // 初始SRS等级为0
+                nextReviewDate: today, // 新词立即可以复习
+                lastReviewed: null
+            };
+
+            db.languageLearning.words.push(newWord);
+            saveToStorage();
+            renderLanguagePage(); // 重新渲染列表
+            renderTodayVocabularyModule(); 
+
+            // 清空输入框
+            originalWordInput.value = '';
+            translationInput.value = '';
+        }
+    });
+    function updateWordSrs(wordId, rememberedCorrectly) {
+        const word = db.languageLearning.words.find(w => w.id === wordId);
+        if (!word) return;
+
+        const today = new Date().toISOString().split('T')[0];
+
+        if (rememberedCorrectly) {
+            // 如果答对，SRS等级提升
+            word.srsLevel++;
+        } else {
+            // 如果答错，SRS等级降级 (降到1级，而不是0，避免过度惩罚)
+            word.srsLevel = 1;
+        }
+        
+        // 从配置中获取新的复习间隔
+        // 注意：如果等级超过数组长度，我们使用最后一个间隔
+        let interval = SRS_INTERVALS[word.srsLevel - 1] || SRS_INTERVALS[SRS_INTERVALS.length - 1];
+
+        // 计算并更新下一次复习日期
+        word.nextReviewDate = addDaysToDate(today, interval);
+        word.lastReviewed = today;
+
+        console.log(`单词 "${word.original}" 已更新。新等级: ${word.srsLevel}, 下次复习: ${word.nextReviewDate}`);
+    }
+
+    // 核心函数2：获取今天所有需要复习的单词
+    function getTodaysReviewWords() {
+        const today = new Date().toISOString().split('T')[0];
+        return db.languageLearning.words.filter(word => {
+            return word.nextReviewDate <= today;
+        });
+    }
+    function startSrsSession() {
+        const wordsToReview = getTodaysReviewWords();
+        if (wordsToReview.length === 0) {
+            alert("今天没有需要学习的单词！");
+            return;
+        }
+
+        // 打乱数组顺序，增加随机性
+        srsSession.words = wordsToReview.sort(() => Math.random() - 0.5);
+        srsSession.currentIndex = 0;
+        srsSession.correctAnswers = 0;
+
+        srsCompletionMessage.style.display = 'none';
+        srsCard.style.display = 'flex';
+        srsControls.style.display = 'block';
+
+        showSrsCard();
+        srsModal.classList.add('visible');
+    }
+
+    function showSrsCard() {
+        if (srsSession.currentIndex >= srsSession.words.length) {
+            endSrsSession();
+            return;
+        }
+
+        const currentWord = srsSession.words[srsSession.currentIndex];
+
+        // 核心修改：将进度条从 "x / y" 改为 "剩余 z 个"
+        const wordsRemaining = srsSession.words.length - srsSession.currentIndex;
+        srsProgress.textContent = `剩余 ${wordsRemaining} 个`;
+
+        srsWordOriginal.textContent = currentWord.original;
+        srsWordTranslation.textContent = currentWord.translation;
+
+        srsWordTranslation.style.display = 'none';
+        srsShowAnswerBtn.style.display = 'block';
+        srsFeedbackButtons.style.display = 'none';
+    }
+
+    srsShowAnswerBtn.addEventListener('click', () => {
+        srsWordTranslation.style.display = 'block';
+        srsShowAnswerBtn.style.display = 'none';
+        srsFeedbackButtons.style.display = 'flex';
+    });
+
+    srsIncorrectBtn.addEventListener('click', () => handleSrsAnswer(false));
+    srsCorrectBtn.addEventListener('click', () => handleSrsAnswer(true));
+
+    function handleSrsAnswer(rememberedCorrectly) {
+        const currentWord = srsSession.words[srsSession.currentIndex];
+
+        // 核心修改：如果答错了，则将该单词重新添加到学习队列的末尾
+        if (!rememberedCorrectly) {
+            srsSession.words.push(currentWord);
+        }
+
+        // 无论对错，都更新其SRS等级和下次复习日期
+        // 答对了会升级，答错了会降级到第1级（第二天复习）
+        updateWordSrs(currentWord.id, rememberedCorrectly);
+
+        if (rememberedCorrectly) {
+            srsSession.correctAnswers++;
+        }
+
+        srsSession.currentIndex++;
+        showSrsCard();
+    }
+
+    function endSrsSession() {
+        srsCard.style.display = 'none';
+        srsControls.style.display = 'none';
+        srsCompletionMessage.style.display = 'block';
+
+        // 每个答对的单词奖励2个学识点
+        const pointsEarned = srsSession.correctAnswers * 1;
+        if (pointsEarned > 0) {
+            addKnowledgePoints(pointsEarned, '完成今日词汇学习');
+        }
+
+        saveToStorage();
+        renderTodayVocabularyModule(); // 更新主页模块状态
+
+        // 3秒后自动关闭弹窗
+        setTimeout(() => {
+            srsModal.classList.remove('visible');
+        }, 3000);
+    }
+
+    // --- 主页模块渲染 ---
+    function renderTodayVocabularyModule() {
+        const container = document.getElementById('today-vocabulary-content');
+        const wordsToReview = getTodaysReviewWords();
+
+        if (wordsToReview.length > 0) {
+            container.innerHTML = `
+                <p>有 <strong>${wordsToReview.length}</strong> 个词汇等待您复习。</p>
+                <button id="start-srs-btn" class="check-in-btn">开始学习</button>
+            `;
+            document.getElementById('start-srs-btn').addEventListener('click', startSrsSession);
+        } else {
+            container.innerHTML = `<p>今日学习任务已全部完成！🎉</p>`;
+        }
+    }
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // 生成新的每日任务
+    function generateDailyTasks() {
+        shuffleArray(DAILY_TASK_POOL);
+        db.tasks.daily = DAILY_TASK_POOL.slice(0, 5).map(task => ({ ...task, completed: false }));
+        console.log("新的每日任务已生成:", db.tasks.daily);
+    }
+
+    // 生成新的每周任务
+    function generateWeeklyTasks() {
+        shuffleArray(WEEKLY_TASK_POOL);
+        db.tasks.weekly = WEEKLY_TASK_POOL.slice(0, 7).map(task => ({ ...task, completed: false }));
+        console.log("新的每周任务已生成:", db.tasks.weekly);
+    }
+
+    // 检查是否需要刷新任务
+    function checkAndRefreshTasks() {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+
+        // 检查每日任务
+        if (db.lastDailyTaskRefresh !== todayStr || !db.tasks.daily || db.tasks.daily.length === 0) {
+            generateDailyTasks();
+            db.lastDailyTaskRefresh = todayStr;
+            saveToStorage();
+        }
+
+        // 检查每周任务 (每周一刷新)
+        const dayOfWeek = today.getDay(); // 0 = 周日, 1 = 周一
+        const isMonday = dayOfWeek === 1;
+        const lastMonday = new Date(today);
+        lastMonday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+        const lastMondayStr = lastMonday.toISOString().split('T')[0];
+
+        if ((isMonday && db.lastWeeklyTaskRefresh !== lastMondayStr) || !db.tasks.weekly || db.tasks.weekly.length === 0) {
+            generateWeeklyTasks();
+            db.lastWeeklyTaskRefresh = lastMondayStr;
+            saveToStorage();
+        }
+    }
+
+    // 渲染任务页面
+    function renderTasksPage() {
+        const dailyList = document.getElementById('daily-tasks-list');
+        const weeklyList = document.getElementById('weekly-tasks-list');
+        dailyList.innerHTML = '';
+        weeklyList.innerHTML = '';
+
+        // 渲染每日任务
+        db.tasks.daily.forEach(task => {
+            const item = document.createElement('div');
+            item.className = `task-item ${task.completed ? 'completed' : ''}`;
+            // V V V 核心改动在这里 V V V
+            item.innerHTML = `
+            <div class="task-info">
+                <p class="task-name">${task.description}</p>
+                <p class="task-reward">+${task.reward} 学识点</p>
+            </div>
+            <button class="task-status" data-task-id="${task.id}" data-task-type="daily" ${task.completed ? 'disabled' : ''}>
+                ${task.completed ? '✓' : '完成'}
+            </button>
+        `;
+            // ^ ^ ^ 核心改动在这里 ^ ^ ^
+            dailyList.appendChild(item);
+        });
+
+        // 渲染每周任务
+        db.tasks.weekly.forEach(task => {
+            const item = document.createElement('div');
+            item.className = `task-item ${task.completed ? 'completed' : ''}`;
+            // V V V 核心改动在这里 V V V
+            item.innerHTML = `
+            <div class="task-info">
+                <p class="task-name">${task.description}</p>
+                <p class="task-reward">+${task.reward} 学识点</p>
+            </div>
+            <button class="task-status" data-task-id="${task.id}" data-task-type="weekly" ${task.completed ? 'disabled' : ''}>
+                ${task.completed ? '✓' : '完成'}
+            </button>
+        `;
+            // ^ ^ ^ 核心改动在这里 ^ ^ ^
+            weeklyList.appendChild(item);
+        });
+    }
+
+    // 绑定任务完成事件
+    function setupTaskCompletionListener() {
+        const tasksPage = document.getElementById('tasks-page');
+        tasksPage.addEventListener('click', (e) => {
+            if (e.target.classList.contains('task-status') && !e.target.disabled) {
+                const button = e.target;
+                const taskId = button.dataset.taskId;
+                const taskType = button.dataset.taskType;
+
+                let task = null;
+                if (taskType === 'daily') {
+                    task = db.tasks.daily.find(t => t.id === taskId);
+                } else {
+                    task = db.tasks.weekly.find(t => t.id === taskId);
+                }
+
+                if (task && !task.completed) {
+                    task.completed = true;
+                    addKnowledgePoints(task.reward, `完成任务: ${task.description}`);
+                    saveToStorage();
+                    renderTasksPage(); // 重新渲染以更新按钮状态
+                    renderTodayPage(); // 更新主页的学识点
+                    renderCheckinPage(); // 更新签到页的学识点
+                }
+            }
+        });
+    }
+
+    // --- 12. Initialization Function ---
     // --- 12. Initialization Function ---
     function initialize() {
         loadFromStorage();
+        checkAndRefreshTasks(); // <--- 就是添加这一行关键代码，命令任务系统开始工作
         setupNavigation();
         renderTodayPage();
         loadChatHistory();
@@ -969,6 +1451,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCheckinPage();
         renderMoments();
         updateNotificationDot();
+        setTimeout(getNewsSummary, 100); // 延迟100毫秒执行
 
         // 使用新的函数来初始化按钮状态
         const todayCheckinBtn = document.getElementById('today-checkin-btn');
@@ -977,6 +1460,11 @@ document.addEventListener('DOMContentLoaded', () => {
             updateTodayCheckinButtonState(); // 使用新函数进行初始化
             triggerDailySpontaneousPost();
         }
+        renderStaticAvatars();
+        renderLanguagePage();
+        renderTodayVocabularyModule();
+        renderTasksPage();
+        setupTaskCompletionListener();
     }
     function registerServiceWorker() {
         if ('serviceWorker' in navigator) {
@@ -1131,7 +1619,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        const basePoints = 10;
+        const basePoints = 5;
         const streakBonus = db.consecutiveCheckInDays;
         const pointsEarned = basePoints + streakBonus;
 

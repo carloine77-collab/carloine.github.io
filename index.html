@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>私域</title>
+    <title>Praxis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
 
             <div class="status-bar">
                 <span id="current-time">10:10</span>
-                <span>LTE</span>
+                <span>Amor Fati.</span>
             </div>
 
             <div class="app-page-container">
@@ -30,7 +30,7 @@
                     <div class="app-content today-content">
                         <div class="today-card">
                             <div class="today-icon">❖</div>
-                            <h1 class="today-quote">每一个微小的进步，都值得被喝彩。</h1>
+                            <h1 class="today-quote">Difficulties strengthen the mind, as labor does the body.</h1>
                             <p class="today-date">August 25, 2025</p>
                         </div>
 
@@ -53,7 +53,13 @@
                             <h3>今日习惯</h3>
                             <p>暂无待办习惯</p>
                         </div>
-                    </div>
+                        <div class="today-module" id="today-vocabulary-module">
+                            <h3>今日词汇</h3>
+                            <div id="today-vocabulary-content">
+                                <p>正在检查复习计划...</p>
+                            </div>
+                            </div>
+                        </div>
                 </div>
 
                 <div id="modules-page" class="app-page">
@@ -87,8 +93,8 @@
                         </div>
                         <div class="app-icon" data-page="chat-page">
                             <div class="icon-bg">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17.09 4a4.9 4.9 0 0 0-4.09 2.13A4.9 4.9 0 0 0 9 4a4.91 4.91 0 0 0-5.91 5.78C3 16.94 6 22 9 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M6 12h.01M9 12h.01M15 12h.01M18 12h.01"/></svg>
-                            </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                </div>
                             <span class="app-name">私信</span>
                         </div>
                         <div class="app-icon" data-page="moments-page" id="moments-app-icon">
@@ -110,8 +116,19 @@
                             </div>
                             <span class="app-name">新闻摘要</span>
                         </div>
-
-                    </div>
+                        <div class="app-icon" data-page="language-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            </div>
+                            <span class="app-name">语言学习</span>
+                        </div>
+                        <div class="app-icon" data-page="tasks-page">
+                            <div class="icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 12 2 2 4-4"></path></svg>
+                            </div>
+                            <span class="app-name">每日任务</span>
+                        </div>
+                        </div>
                 </div>
 
                 <div id="chat-page" class="app-page">
@@ -172,6 +189,7 @@
 
                 <div id="settings-page" class="app-page">
                     <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
                         <h2>“圣典”协议</h2>
                     </div>
                     <div class="app-content settings-content">
@@ -239,12 +257,11 @@
                 <div id="moments-page" class="app-page">
                     <div class="app-content moments-content-scrollable">
                         <div class="moments-cover">
-                            <img src="https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cover Photo">
+                            <img src="images/2.png" alt="Cover Photo">
                             <div class="moments-profile">
                                 <span class="moments-profile-name">我</span>
-                                <div class="moments-profile-avatar">
-                                    <img src="https://image.lexica.art/full_jpg/a6a1858c-3081-4a16-a144-f2a83e606117" alt="User Avatar">
-                                </div>
+                                <div id="user-moments-avatar-container" class="moments-profile-avatar">
+                                    </div>
                             </div>
                         </div>
     
@@ -295,10 +312,11 @@
                 <div id="ai-profile-page" class="app-page">
                     <div class="app-header">
                         <button class="back-btn-chat">‹</button>
+                        <h2>陈既白</h2>
                     </div>
                     <div class="app-content profile-content">
                         <div class="profile-header">
-                            <div class="profile-avatar-large">
+                            <div id="ai-profile-avatar-container" class="profile-avatar-large">
                                 </div>
                             <h2 class="profile-name">陈既白</h2>
                             <p class="profile-signature">“在此处设置个性签名”</p>
@@ -315,12 +333,11 @@
                 <div id="ai-moments-page" class="app-page">
                     <div class="app-content moments-content-scrollable">
                         <div class="moments-cover">
-                            <img src="https://images.pexels.com/photos/931018/pexels-photo-931018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cover Photo">
+                            <img src="images/1.jpg" alt="Cover Photo">
                             <div class="moments-profile">
                                 <span class="moments-profile-name">陈既白</span>
-                                <div class="moments-profile-avatar">
-                                    <img src="https://image.lexica.art/full_jpg/cf5b8015-844c-4a69-aaac-501b8782d475" alt="AI Avatar">
-                                </div>
+                                <div id="ai-moments-avatar-container" class="moments-profile-avatar">
+                                    </div>
                             </div>
                         </div>
 
@@ -334,7 +351,58 @@
                     </div>
                 </div>
 
-            </div>
+                <div id="language-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>语言学习</h2>
+                    </div>
+                    <div class="app-content">
+                        <form id="add-word-form" class="setting-card">
+                             <div class="setting-header">
+                                <h3>添加新词汇</h3>
+                            </div>
+                            <div class="setting-body">
+                                <input type="text" id="original-word-input" placeholder="输入外语单词 (例如: cześć)" required>
+                                <br><br>
+                                <input type="text" id="translation-input" placeholder="输入中文翻译 (例如: 你好)" required>
+                                <br><br>
+                                <button type="submit" class="save-btn" style="width:100%; padding: 12px; border-radius: 8px;">添加单词</button>
+                            </div>
+                        </form>
+                        
+                        <div id="word-list-container" class="setting-card">
+                             <div class="setting-header">
+                                <h3>我的词库</h3>
+                            </div>
+                             <div id="word-list" class="setting-body">
+                                <p>这里会显示您添加的单词...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tasks-page" class="app-page">
+                    <div class="app-header">
+                        <button class="back-btn-modules">‹ 功能</button>
+                        <h2>每日/每周任务</h2>
+                    </div>
+                    <div class="app-content">
+                        <div class="tasks-section">
+                            <h2>每日任务</h2>
+                            <p class="tasks-timer" id="daily-tasks-timer">24:00:00后刷新</p>
+                            <div id="daily-tasks-list" class="tasks-list">
+                                </div>
+                        </div>
+
+                        <div class="tasks-section">
+                            <h2>每周任务</h2>
+                            <p class="tasks-timer" id="weekly-tasks-timer">7天后刷新</p>
+                            <div id="weekly-tasks-list" class="tasks-list">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
 
             <nav id="bottom-nav">
                 <div class="nav-btn active" data-page="today-page">🏠</div>
@@ -382,6 +450,40 @@
         </div>
     </div>
 
-</body>
+    <div id="srs-modal" class="modal">
+        <div class="modal-content">
+            <div class="srs-header">
+                <h3>今日学习</h3>
+                <span id="srs-progress"></span>
+            </div>
+            <div id="srs-card">
+                <div id="srs-word-original"></div>
+                <div id="srs-word-translation" style="display: none;"></div>
+            </div>
+            <div id="srs-controls">
+                <button id="srs-show-answer-btn" class="save-btn">显示答案</button>
+                <div id="srs-feedback-buttons" style="display: none;" class="modal-buttons">
+                    <button id="srs-incorrect-btn" class="cancel-btn">答错了</button>
+                    <button id="srs-correct-btn" class="save-btn">想起来了</button>
+                </div>
+            </div>
+            <div id="srs-completion-message" style="display: none;">
+                <p>🎉</p>
+                <h4>太棒了！</h4>
+                <p>今日学习任务已完成。</p>
+            </div>
+        </div>
+    </div>
+    <div id="delete-word-modal" class="modal">
+        <div class="modal-content">
+            <h3>确认删除</h3>
+            <p style="text-align: center; margin-bottom: 25px;">您确定要从词库中删除这个单词吗？此操作无法撤销。</p>
+            <div class="modal-buttons">
+                <button id="delete-word-cancel-btn" class="cancel-btn">取消</button>
+                <button id="delete-word-confirm-btn" class="delete-btn">确认删除</button>
+            </div>
+        </div>
+    </div>
+    </body>
 
 </html>
