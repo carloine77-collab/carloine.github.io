@@ -1,6 +1,6 @@
 {
-  "name": "私域",
-  "short_name": "私域",
+  "name": "Praxis",
+  "short_name": "Praxis",
   "description": "一个私人的AI伴侣应用",
   "start_url": "/index.html",
   "display": "standalone",
